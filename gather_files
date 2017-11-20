@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#! /bin/sh
 
 # setup files folder 
 rm -rf files
