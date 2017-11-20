@@ -1,0 +1,39 @@
+#! /usr/bin/python
+import argparse
+import os
+import subprocess
+
+PROJECT_FOLDER = os.path.expanduser('~/projects')
+DEFAULT_FILENAME = 'note'
+EDITOR = 'vim'
+
+parser = argparse.ArgumentParser(description='Take some notes!')
+parser.add_argument('-f', '--filename', default='')
+parser.add_argument('-e', '--edit', action='store_true', help='Force open editor!')
+parser.add_argument('message', nargs='*')
+args = parser.parse_args()
+
+filepath = os.path.join(PROJECT_FOLDER, args.filename)
+required_path = os.path.split(filepath)[0]
+os.makedirs(required_path, exist_ok=True)
+if os.path.isdir(filepath):
+    filepath = os.path.join(filepath, DEFAULT_FILENAME)
+
+if args.message:
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            content = f.read()
+    else:
+        content = ''
+
+    if content and not content.endswith('\n'):
+        prefix = '\n'
+    else:
+        prefix = ''
+
+    with open(filepath, 'a') as f:
+        f.write(prefix + ' '.join(args.message) + '\n')
+
+if args.edit or not args.message:
+    subprocess.call([EDITOR, filepath])
+

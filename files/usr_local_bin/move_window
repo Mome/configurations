@@ -1,0 +1,187 @@
+#! /usr/bin/python3 
+
+from subprocess import getoutput, call
+from collections import namedtuple
+import re
+
+TOLERANCE = 10
+
+Screen = namedtuple('Screen', ['x', 'y', 'width', 'height'])
+
+pattern = re.compile(r' (\d*)x(\d*)\+(\d*)\+(\d*) ')
+
+def get_screens():
+    screen_list = []
+    screen_line = None
+    for line in getoutput('xrandr').split('\n'):
+        if " connected " in line:
+            screen_line = line
+        elif "*" in line:
+            match = pattern.search(screen_line)
+            nums = map(int, match.groups())
+            w, h, x, y = nums
+            screen_list.append(Screen(x, y, w, h))
+
+    return screen_list
+
+SCREENS = get_screens()
+
+def get_active_window():
+    # get window id
+    root_id = getoutput('xprop -root _NET_ACTIVE_WINDOW')
+    root_id = int(root_id.split(' # ')[-1], base=16)
+
+    # get screen resolution
+    props = getoutput('xprop -id ' + str(root_id) + ' _NET_WM_STATE')
+    props = props.split('=')[1].split(',')
+    props = tuple(p.strip() for p in props)
+
+    # get window position
+    window_list= [line.split() for line in getoutput('wmctrl -lG').split('\n')]
+    window_ids = list(zip(*window_list))[0]
+    window_ids = [int(id_,base=16) for id_ in window_ids]
+    index = window_ids.index(root_id)
+    active_desktop = window_list[index][1]
+    x, y, width, height = map(int, window_list[index][2:6])
+
+    return Window(root_id, props, x, y, width, height)
+
+
+MetaWindow = namedtuple('MetaWindow', "root_id props x y width height".split())
+
+class Window(MetaWindow):
+    """def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwars)
+        if '_OB_WM_STATE_UNDECORATED' in self.props:
+            # distinguish maximized and unmaximized borders / position
+            self.upper_border = 2
+            self.lower_border = -1
+            self.left_border = 0
+            self.right_bord = 0
+        else:
+            self.upper_border = 42
+            self.lower_border = -21
+            self.left_border = 2
+            self.right_border = 0"""
+
+    @property
+    def is_fullscreen(self):
+        return '_NET_WM_STATE_FULLSCREEN' in self.props
+
+    @property
+    def is_max_horz(self):
+        return '_NET_WM_STATE_MAXIMIZED_HORZ' in self.props
+
+    @property
+    def is_max_vert(self):
+        return '_NET_WM_STATE_MAXIMIZED_VERT' in self.props
+
+    @property
+    def is_top(self):
+        return (win_y == upper_border)
+
+    @property
+    def is_bottom(self):
+        return (screen_height == (upper_border + lower_border + screen_width))
+
+    @property
+    def is_right(self):
+        return (self.screen.width <= (self.x + self.width))
+
+    @property
+    def is_left(self):
+        return (self.screen.x <= self.x <= self.screen.x + TOLERANCE)
+
+    @property
+    def screen(self):
+        """Returns screen containing window center."""
+
+        if "_screen" in dir(self):
+            return self._screen
+
+        x = self.x + round(self.width / 2)
+        y = self.y + round(self.width / 2)
+        for screen in SCREENS:
+            x_in = (screen.x <= x <= (screen.x + screen.width))
+            y_in = (screen.y <= y <= (screen.y + screen.height))
+            if x_in and y_in:
+                self._screen = screen
+                return screen
+        raise NotImplementedError("Could not find current screen.")
+
+    def get_next_screen(self, direction):
+
+        if direction == 'right':
+            x = self.screen.x + self.screen.width + TOLERANCE
+            y = self.screen.y + round(self.screen.height / 2)
+
+        if direction == 'left':
+            x = self.screen.x - TOLERANCE
+            y = self.screen.y + round(self.screen.height / 2)
+
+        for screen in SCREENS:
+            if screen.x <= x <= (screen.x + screen.width):
+                if screen.y <= y <= (screen.y + screen.height):
+                    print('found screen', screen)
+                    return screen
+
+        # if no screen found return current sreen
+        print('no', direction, 'screen!!')
+
+    def restore(self):
+        if self.is_fullscreen:
+            cmd = "wmctrl -r :ACTIVE: -b remove,fullscreen"
+            call(cmd.split())
+        if self.is_max_horz or self.is_max_vert:
+            cmd = "wmctrl -r :ACTIVE: -b remove,maximized_vert,maximized_horz"
+            call(cmd.split())
+
+    def move(self, direction):
+
+        if direction == 'left':
+            if self.is_max_vert and self.is_left:
+                screen = self.get_next_screen('left')
+                if screen is None:
+                    screen = self.screen
+                else:
+                    direction = 'right'
+            else:
+                print('is not!!', self.is_max_vert, self.is_left)
+                print(self.x,self.screen.x)
+                screen = self.screen
+
+        elif direction == 'right':
+            if self.is_max_vert and self.is_right:
+                screen = self.get_next_screen('right')
+                if screen is None:
+                    screen = self.screen
+                else:
+                    direction = 'left'
+            else:
+                print('is not!!', self.is_max_vert, self.is_right)
+                screen = self.screen
+
+        self.restore()
+
+        half_width = round(screen.width / 2)
+        if direction == 'left':
+            pose = [0, screen.x, screen.y, half_width, -1]
+        elif direction == 'right':
+            pose = [0, screen.x + half_width, screen.y, half_width, -1]
+        else:
+            raise ValueError('direction must be left or right!')
+
+        pose = ','.join(map(str, pose))
+        cmd = "wmctrl -r :ACTIVE: -e " + pose
+        call(cmd.split())
+        cmd = "wmctrl -r :ACTIVE: -b add,maximized_vert"
+        call(cmd.split())
+
+
+def main():
+    import sys
+    awin = get_active_window()
+    awin.move(sys.argv[1])
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,18 @@
+#! /usr/bin/python3
+
+from subprocess import getoutput, call
+
+browsers = ['chromium', 'firefox']
+
+output = getoutput('wmctrl -l')
+output = output.lower() 
+
+for bro in browsers:
+    if bro in output:
+        call(['wmctrl', '-a', bro])
+        break
+else:
+    default_browser = getoutput('xdg-settings get default-web-browser')
+    # also removes the 
+    call(default_browser.split('.')[0])
+

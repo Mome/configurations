@@ -1,0 +1,10 @@
+#! /usr/bin/sh
+
+# setup files folder 
+rm -rf files
+mkdir files
+
+cp ~/.config/openbox/rc.xml files
+
+mkdir files/usr_local_bin
+cp /usr/local/bin/* files/usr_local_bin

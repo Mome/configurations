@@ -1,0 +1,12 @@
+#! /usr/bin/python3
+
+from subprocess import getoutput, call
+
+output = getoutput('wmctrl -l')
+output = output.lower() 
+
+if 'zotero' in output:
+    call(['wmctrl', '-a', 'zotero'])
+else:
+    call('zotero')
+
