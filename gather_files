@@ -3,8 +3,11 @@
 # setup files folder 
 rm -rf files
 mkdir files
+cd files
 
-cp ~/.config/openbox/rc.xml files
+cp ~/.config/openbox/rc.xml .
 
-mkdir files/usr_local_bin
-cp /usr/local/bin/* files/usr_local_bin
+mkdir usr_local_bin
+cp /usr/local/bin/* usr_local_bin
+
+cp ~/.shrc .

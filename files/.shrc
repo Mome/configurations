@@ -1,0 +1,106 @@
+#! /usr/bin/sh
+
+# Check for an interactive session
+[ -z "$PS1" ] && return
+
+
+# make man colorful
+man() {
+    env \
+    LESS_TERMCAP_mb=$'\e[01;31m' \
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    man "$@"
+}
+
+
+open() { nohup xdg-open "$@" &> /dev/null & }
+
+# variable export
+export PATH=~/.local/bin:$PATH
+export HISTIGNORE='ll:ls:cd:..:la:am'
+export PAGER='less -R'
+export EDITOR="vim"
+export TIME_STYLE='+%y-%m-%d %H:%M'
+
+#PS1='[\u@\h \W]\$ '
+#PS1='\[\e[2;31m\][\u@\h \W]\$\[\e[0m\] '                               
+
+alias rm='rm -I'                   # most important alias in the world 
+alias cp="cp -i"                   # confirm before overwriting something
+alias df='df -h'                   # human-readable sizes
+alias free='free -m'               # show sizes in MB
+alias more=less                    # actually most important alias
+alias vm=mv
+
+# directory naviagation
+#alias ..='cd ..'
+#alias ...='cd ../..'
+#alias ....='cd ../../..'
+
+# direcotry display
+alias ls='ls --color=auto '
+alias l='ls'
+alias la='ls -a'
+alias ll='ls -hl'
+alias lal='ll -a'
+alias lla='lal'
+alias sl='ls'
+
+# program shortcuts
+alias am="alsamixer"
+alias ccat="pygmentize -g"
+alias e="vim"
+alias f="pcmanfm . &"
+alias ff="firefox &"
+alias g="git"
+alias grep="grep --colour=auto"
+alias o="open"
+alias s='sudo'
+alias screenoff='xset dpms force off'
+alias suspend='sudo /usr/sbin/pm-suspend'
+alias tb='thunderbird &'
+alias untar='tar xvf'
+alias wifi='sudo wifi-menu'
+alias y='yaourt'
+
+# python stuff 
+alias notebook='jupyter notebook'
+alias py='python'
+alias pig="pip freeze | grep"
+alias pipi="pip install"
+alias pipu="pip install -U"
+alias pipr="pip uninstall"
+alias ipy='ipython --no-banner'
+alias venv="source ~/venv3/bin/activate"
+alias venv2="source ~/venv2/bin/activate"
+alias venv3="source ~/venv3/bin/activate"
+alias qtconsole="jupyter qtconsole"
+alias qtc="jupyter qtconsole --profile=mome --no-banner"
+
+# ssh sessios
+alias sshpi='ssh pi@mome.mooo.com'
+alias sshgate='ssh mmeier@gate.ikw.uos.de'
+alias sshtower='ssh -tA mmeier@gate.ikw.uos.de ssh -tA tower'
+alias matlab="ssh -tYA mmeier@gate.ikw.uos.de ssh -tYA tower 'matlab'"
+
+# other
+alias oml='python ~/code/openml-helper/openml_helper.py'
+alias todo='vim ~/projects/todo -c ":set syntax=markdown"'
+
+#alias text_client='python3 ~/workspace/savvy3/src/text_interface/client.py'
+#alias in='~/planner/bin/in_basket.py'
+#alias sshgate='gnome-terminal --profile=brown -x sh -c "ssh mmeier@gate.ikw.uos.de" &'
+#alias voc='python2 ~/planner/bin/voc.py'
+#alias work='python ~/code/pui/work.py'
+#alias update='sudo pacman-mirrors -g && sudo pacman -Syy  && yaourt -Suya --devel'
+#alias p='python ~/code/planner/planner.py'
+#alias t='python ~/code/pui/todo.py'
+#alias t='python ~/code/pui3/task.py'
+
+
+
