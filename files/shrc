@@ -1,0 +1,181 @@
+#! /usr/bin/sh
+
+# Check for an interactive session
+[ -z "$PS1" ] && return
+
+# variable export
+export PATH=~/.local/bin:$PATH
+export HISTIGNORE='ll:ls:cd:..:la:am'
+export PAGER='less -R'
+export EDITOR="vim"
+export TIME_STYLE='+%y-%m-%d %H:%M'
+export PIP_FORMAT=columns
+
+# the holy lesspipe
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" 
+
+# make man colorful
+man() {
+    env \
+    LESS_TERMCAP_mb=$'\e[01;31m' \
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    man "$@"
+}
+
+# open a file with preffered application
+open() {
+    nohup xdg-open "$@" &> /dev/null &
+}
+
+# connect to cls-vpn inside a tmux session
+vpn() {
+    tmux a -t vpn || tmux new -s vpn "cd ~/vpn && sudo openvpn guard-udp-1194-mome.ovpn"
+}
+
+update() { 
+    set -o xtrace
+    sudo apt autoremove -y
+    sudo apt clean
+    sudo apt update
+    sudo apt-get -y full-upgrade
+    sudo apt autoremove -y
+    sudo apt clean
+    #if hash puppet 2>/dev/null; then
+    #    sudo puppet agent -t
+    #fi
+    if hash snap 2>/dev/null; then
+        sudo snap refresh
+    fi
+    #sudo gem update && sudo gem update --system && 
+    ( cd ~/repos/planner && git pull )
+    set +o xtrace
+}
+
+alias rm='rm -I'                   # most important alias in the world 
+alias cp="cp -ip"                   # confirm before overwriting something
+alias df='df -h'                   # human-readable sizes
+alias free='free -m'               # show sizes in MB
+alias more='less'                    # actually most important alias
+alias vm='mv'
+alias dc='cd'
+alias du="du -h"
+
+# directory naviagation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# directiory display
+alias ls='ls --color=auto '
+alias l='ls'
+alias la='ls -a'
+alias ll='ls -hl'
+alias lal='ll -a'
+alias lla='lal'
+alias sl='ls'
+
+# apt
+alias install="sudo apt install"
+alias sapt='s apt'
+
+# program shortcuts
+alias am="alsamixer"
+alias ccat="pygmentize -g"
+alias e="vim"
+alias vom="vim"
+alias ivm="vim"
+alias f="xdg-open . &"
+alias ff="firefox &"
+alias g="git"
+alias grep="grep --colour=auto"
+alias o="open"
+alias s='sudo -i'
+alias screenoff='xset dpms force off'
+alias suspend='sudo /usr/sbin/pm-suspend'
+alias tb='thunderbird &'
+alias untar='tar xvf'
+alias wifi='sudo wifi-menu'
+alias y='yaourt'
+alias wttr='curl wttr.in'
+alias ip="ip -c"
+alias gotop="gotop-cjbassi"
+alias top="htop"
+
+# python stuff 
+alias pyhton='python'
+alias py='python'
+alias py3='python3'
+alias py2='python2'
+alias ipy='ipython3 --no-banner --profile=mome'
+alias iyp='ipy'
+alias jupylab='jupyter lab --ip=0.0.0.0 --browser="chromium-browser --app=%s"'
+alias notebook='jupyter notebook'
+alias qtconsole="jupyter qtconsole"
+alias qtc="jupyter qtconsole --profile=mome --no-banner"
+
+#jupylab() {
+#    if tmux list-sessions -F "#{session_name}" | grep -x jupylab
+#    then
+#        chromium-browser --app="10.101.1.118"
+#    else
+#        tmux new -d -s jupylab "cd ~/repos/ease && jupyter lab --ip=0.0.0.0 --browser='chromium-browser --app=%s'"
+#    fi
+#}
+
+
+# office
+alias excel='libreoffice --calc'
+
+# orga
+alias todolist='vim ~/Documents/projects/todo -c ":set syntax=markdown"'
+alias note='python3 ~/repos/planner/note.py'
+alias notes='note'
+alias np='note push'
+alias ne='note edit'
+alias nl='note list' # this overwrites coreutils's nl 
+alias journal='vim ~/Documents/projects/journal'
+alias buy='vim ~/Documents/notes/buy -c ":set syntax=markdown"'
+alias life='vim ~/Documents/projects/life -c ":set syntax=markdown"'
+alias souls='vim ~/Documents/notes/souls -c ":set syntax=markdown"'
+alias places='vim ~/Documents/notes/places -c ":set syntax=markdown"'
+alias structure='vim ~/Documents/projects/plan/structure -c ":set syntax=markdown"'
+alias projects='vim ~/Documents/projects/projects -c ":set syntax=markdown"'
+alias struc=structure
+alias proj=projects
+alias todo='todolist'
+
+pp() {
+python3 ~/repos/planner/project_parser.py ~/Documents/projects/projects "$@" > /tmp/pp.dot && xdot /tmp/pp.dot
+}
+
+# other
+alias lights='python3 ~/code/CartesiumRaumsteuerung/lights.py mome passw0rd 02056'
+alias blinds='python3 ~/code/CartesiumRaumsteuerung/blinds.py mome passw0rd 02056'
+alias ccat='pygmentize -g'
+alias music='tmux a -t mps'
+alias lsds='python3 ~/repos/ease/conversion/scripts/quality_check.py'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+
+# old stuff
+#alias text_client='python3 ~/workspace/savvy3/src/text_interface/client.py'
+#alias in='~/planner/bin/in_basket.py'
+#alias sshgate='gnome-terminal --profile=brown -x sh -c "ssh mmeier@gate.ikw.uos.de" &'
+#alias voc='python2 ~/planner/bin/voc.py'
+#alias work='python ~/code/pui/work.py'
+#alias update='sudo pacman-mirrors -g && sudo pacman -Syy  && yaourt -Suya --devel'
+#alias p='python ~/code/planner/planner.py'
+#alias t='python ~/code/pui/todo.py'
+#alias t='python ~/code/pui3/task.py'
+#export WORKON_HOME="~/.virtualenvs" 
+
+eval `dircolors ~/.dir_colors/dircolors`
+export PATH=$PATH:/home/mome/.cargo/bin
