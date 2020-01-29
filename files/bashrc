@@ -114,4 +114,6 @@ fi
 source ~/.shrc
 #source /opt/ros/melodic/setup.bash
 
-source /home/mome/.config/broot/launcher/bash/br
+#if [ -d ~/.config/broot]; then
+#    source ~/.config/broot/launcher/bash/br
+#fi
