@@ -7,6 +7,8 @@ destinations = {
     "zshrc" : "~/.zshrc",
     "shrc" : "~/.shrc",
     "bashrc" : "~/.bashrc",
+    "vimrc" : "~/.vimrc",
+    "tumx" : "~/.tmux.conf",
 }
 
 module_path = Path(__file__).parent
