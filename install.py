@@ -8,7 +8,7 @@ destinations = {
     "shrc" : "~/.shrc",
     "bashrc" : "~/.bashrc",
     "vimrc" : "~/.vimrc",
-    "tumx" : "~/.tmux.conf",
+    "tmux" : "~/.tmux.conf",
 }
 
 files_path = Path(__file__).parent / "files"
