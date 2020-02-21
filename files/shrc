@@ -4,15 +4,25 @@
 [ -z "$PS1" ] && return
 
 # variable export
-export PATH=~/.local/bin:$PATH
 export HISTIGNORE='ll:ls:cd:..:la:am'
 export PAGER='less -R'
 export EDITOR="vim"
 export TIME_STYLE='+%y-%m-%d %H:%M'
 export PIP_FORMAT=columns
 
+# change PATH
+if [ -d "$HOME/.dir_colors/dircolors" ] ; then
+    eval `dircolors ~/.dir_colors/dircolors`
+fi
+if [ -d "$HOME/.config/broot/launcher/bash/br" ] ; then
+    source "$HOME/.config/broot/launcher/bash/br"
+fi
+    
+# THIS IS ALREADY IN .profile
+# export PATH=$PATH:/home/mome/.cargo/bin
+# export PATH=~/.local/bin:$PATH
 # the holy lesspipe
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" 
+
 
 # make man colorful
 man() {
@@ -26,6 +36,9 @@ man() {
     LESS_TERMCAP_us=$'\e[01;32m' \
     man "$@"
 }
+
+# activate lesspipe
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" 
 
 # open a file with preffered application
 open() {
@@ -53,6 +66,7 @@ update() {
     fi
     #sudo gem update && sudo gem update --system && 
     ( cd ~/repos/planner && git pull )
+    ( cd ~/repos/configurations && git pull )
     set +o xtrace
 }
 
@@ -64,6 +78,7 @@ alias more='less'                    # actually most important alias
 alias vm='mv'
 alias dc='cd'
 alias du="du -h"
+alias mf="mv"
 
 # directory naviagation
 alias ..='cd ..'
@@ -94,7 +109,7 @@ alias ff="firefox &"
 alias g="git"
 alias grep="grep --colour=auto"
 alias o="open"
-alias s='sudo -i'
+alias s='sudo'
 alias screenoff='xset dpms force off'
 alias suspend='sudo /usr/sbin/pm-suspend'
 alias tb='thunderbird &'
@@ -148,6 +163,8 @@ alias projects='vim ~/Documents/projects/projects -c ":set syntax=markdown"'
 alias struc=structure
 alias proj=projects
 alias todo='todolist'
+alias define="python3 ~/repos/planner/context.py define" #2> /dev/null"
+alias context="python3 ~/repos/planner/context.py list 2> /dev/null"
 
 pp() {
 python3 ~/repos/planner/project_parser.py ~/Documents/projects/projects "$@" > /tmp/pp.dot && xdot /tmp/pp.dot
@@ -158,7 +175,7 @@ alias lights='python3 ~/code/CartesiumRaumsteuerung/lights.py mome passw0rd 0205
 alias blinds='python3 ~/code/CartesiumRaumsteuerung/blinds.py mome passw0rd 02056'
 alias ccat='pygmentize -g'
 alias music='tmux a -t mps'
-alias lsds='python3 ~/repos/ease/conversion/scripts/quality_check.py'
+alias lsds='python3 ~/repos/ease/conversion/scripts/lsds.py'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -175,11 +192,5 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 #alias p='python ~/code/planner/planner.py'
 #alias t='python ~/code/pui/todo.py'
 #alias t='python ~/code/pui3/task.py'
-#export WORKON_HOME="~/.virtualenvs"
+#export WORKON_HOME="~/.virtualenvs" 
 
-
-if [ -f ~/.dir_colors/dircolors ]; then
-    eval `dircolors ~/.dir_colors/dircolors`
-fi
-
-[ -d ~/.cargo ] && export PATH=$PATH:~/.cargo/bin
