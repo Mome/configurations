@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/mome/.oh-my-zsh"
+export ZSH=~/.oh-my-zsh
 source ~/.shrc
 
 # Set name of the theme to load --- if set to "random", it will
@@ -93,4 +93,3 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
-source /home/mome/.config/broot/launcher/bash/br
