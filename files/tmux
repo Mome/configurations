@@ -31,6 +31,10 @@ bind p previous-window
 unbind z
 bind y resize-pane -Z
 
+# double click zoomes pane
+#unbind-key MouseDown2Pane
+#bind-key -n MouseDown2Pane resize-pane -Z 
+
 # shorten command delay
 set -sg escape-time 1
 
@@ -38,7 +42,7 @@ set -sg escape-time 1
 set -g allow-rename off
 
 # mouse control (clickable windows, panes, resizable panes)
-set -g mouse on
+# set -g mouse on
 
 # Use Alt-arrow keys without prefix key to switch panes
 bind -n M-Left select-pane -L
@@ -47,17 +51,17 @@ bind -n M-Up select-pane -U
 bind -n M-Down select-pane -D
 
 # enable vi mode keys
-set-window-option -g mode-keys vi
+# set-window-option -g mode-keys vi
 
 # set default terminal mode to 256 colors
 set -g default-terminal "screen-256color"
 
 # fix pbcopy/pbpaste
-if 'command -v reattach-to-user-namespace >/dev/null' \
-    'set -gq @osx-pasteboard true'
+#if 'command -v reattach-to-user-namespace >/dev/null' \
+#    'set -gq @osx-pasteboard true'
 
-if 'tmux show -gv @osx-clipboard' \
-    'set -g default-command "reattach-to-user-namespace -l $SHELL"'
+#if 'tmux show -gv @osx-clipboard' \
+#    'set -g default-command "reattach-to-user-namespace -l $SHELL"'
 
 # present a menu of URLs to open from the visible pane. sweet.
 bind u capture-pane \;\
