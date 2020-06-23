@@ -3,3 +3,31 @@
 zsh-syntax-highlighting
 -----------------------
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+config manager features
+-----------------------
+* sync through git
+* have profiles
+* there is a default and backup profile
+
+conman switch [profile]
+ - sets profile variable
+ - move all files of the home folder that have a correspondence in the profile folder to the backup folder
+ - create symlinks from the profile folder location to the original file location
+ - backuped files are not overwritten by defaul
+ - --overwrite overwrites backup files
+ - --simulate only promps conflicts
+ 
+conamn add [-p profile]
+ - add file or folder to cona
+
+"conman reset [profile]"
+ - moves all backup files back to its original location
+ - --copy files instead of moving them
+
+conman list [broken / all]
+ - list files managed by conman (by looking if profile file has a link)
+ - for broken and all search for links in home (may take ages)
+conman snyc (commit, pull, and push)
+
+
