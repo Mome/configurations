@@ -11,9 +11,9 @@ export TIME_STYLE='+%y-%m-%d %H:%M'
 export PIP_FORMAT=columns
 
 # change PATH
-if [ -d "$HOME/.dir_colors/dircolors" ] ; then
-    eval `dircolors ~/.dir_colors/dircolors`
-fi
+#if [ -d "$HOME/.dir_colors/dircolors" ] ; then
+#    eval `dircolors ~/.dir_colors/dircolors`
+#fi
 if [ -d "$HOME/.config/broot/launcher/bash/br" ] ; then
     source "$HOME/.config/broot/launcher/bash/br"
 fi
@@ -203,3 +203,4 @@ export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
 
+export PYTHONBREAKPOINT=IPython.core.debugger.set_trace
