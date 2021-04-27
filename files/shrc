@@ -58,9 +58,9 @@ update() {
     sudo apt-get -y full-upgrade
     sudo apt autoremove -y
     sudo apt clean
-    if hash puppet 2>/dev/null; then
-        sudo puppet agent -t
-    fi
+    #if hash puppet 2>/dev/null; then
+    #    sudo puppet agent -t
+    #fi
     if hash snap 2>/dev/null; then
         sudo snap refresh
     fi
